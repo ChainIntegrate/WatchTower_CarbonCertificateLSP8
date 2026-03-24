@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>LUKSO WT Chain Integrate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <!-- Socket.IO server-side (path MUST match server) -->
+  <script src="/wr_cfp/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <img class="brand-logo" src="logo.png" alt="Chain Integrate" />
+        <div class="brand-text">
+          <div class="brand-name">LUKSO WT Chain Integrate</div>
+          <div class="brand-tagline">Event Monitor • Realtime UI • API</div>
+        </div>
+      </div>
+
+      <nav>
+        <div class="pill"><span class="dot" id="dotRpc"></span><span id="txtRpc">RPC: …</span></div>
+        <div class="pill"><span class="dot ok"></span><span id="txtHead">Head: …</span></div>
+        <div class="pill"><span class="dot ok"></span><span id="txtBuf">Buffer: …</span></div>
+        <div class="pill"><span class="dot" id="dotRun"></span><span id="txtRun">Watch: idle</span></div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="page">
+      <section class="card">
+        <h2>Live stream</h2>
+        <p class="sub">
+          Eventi on-chain dai contratti monitorati. Click su una riga per i dettagli (raw log + campi decodificati quando disponibili).
+        </p>
+
+        <div class="filters">
+
+          <div class="field">
+            <label>Scansione</label>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="btn primary" id="btnStart" type="button" disabled title="Gestito dal server (auto-start al boot)">
+                START (auto)
+              </button>
+              <button class="btn secondary" id="btnStop" type="button" disabled title="Gestito dal server (always-on)">
+                STOP (locked)
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Start block</label>
+            <input
+              id="inStartBlock"
+              type="number"
+              inputmode="numeric"
+              min="0"
+              step="1"
+              placeholder="Gestito dal server"
+              autocomplete="off"
+              disabled
+            />
+          </div>
+
+          <!-- FILTRO TIPO -->
+          <select id="fType">
+            <option value="">Tutti</option>
+
+            <!-- Dominio BCC Rev2 (client-side filter) -->
+            <option value="BCC:MINT_CERT">BCC • Mint certificato</option>
+            <option value="BCC:STATUS">BCC • Cambio stato</option>
+            <option value="BCC:AUTHORIZE">BCC • Autorizza attore</option>
+            <option value="BCC:SUBMIT">BCC • Submit contributo</option>
+            <option value="BCC:FREEZE">BCC • Freeze contributo</option>
+            <option value="BCC:AGGREGATE">BCC • Publish aggregate</option>
+            <option value="BCC:METADATA">BCC • TokenURI update</option>
+            <option value="BCC:METADATA_FREEZE">BCC • TokenURI freeze</option>
+            <option value="BCC:ADMIN">BCC • Admin / Allowlist</option>
+
+            <!-- Fallback tecnico (server-side types) -->
+            <option value="LOG">Log (tutto)</option>
+            <option value="TRANSFER">Transfer</option>
+            <option value="MINT">Mint</option>
+            <option value="BURN">Burn</option>
+          </select>
+
+          <div class="field">
+            <label>Contratto</label>
+            <select id="fContract">
+              <option value="">Tutti</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Data da</label>
+            <input id="fFrom" type="date" />
+          </div>
+
+          <div class="field">
+            <label>Data a</label>
+            <input id="fTo" type="date" />
+          </div>
+
+          <div class="field">
+            <label>Cerca</label>
+            <input
+              id="fQ"
+              placeholder="address / txHash / event / token / lot…"
+              autocomplete="off"
+              spellcheck="false"
+            />
+          </div>
+
+          <button class="btn secondary" id="btnClear" type="button">Pulisci</button>
+          <button class="btn secondary" id="btnMore" type="button">Carica più</button>
+          <button class="btn secondary" id="btnShowMore" type="button">Mostra altri</button>
+        </div>
+
+        <div class="list" id="list"></div>
+      </section>
+
+      <section class="card" style="margin-top:14px;">
+        <h2>Dettaglio</h2>
+        <p class="sub">Seleziona un evento per vedere tutti i campi.</p>
+        <div class="mono" id="detail">—</div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span id="uiVersion">UI v—</span>
+        <span class="sep">•</span>
+        <span id="uiBuild">build —</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Carico il client una volta sola, senza auth -->
+  <script type="module" src="./client.js"></script>
+
+  <button id="btnTop" class="btn-top" title="Torna su">↑</button>
+</body>
+</html>
