@@ -4,7 +4,7 @@ node_modules/
 # env / segreti (FONDAMENTALE)
 .env
 .env.*
-/server/secrets.local.js
+server/secrets.local.js
 state.json
 
 # log
